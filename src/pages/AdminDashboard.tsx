@@ -21,6 +21,8 @@ const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userRole, setUserRole] = useState<string | null>(null);
+  const [signupOpen, setSignupOpen] = useState<boolean | null>(null);
+
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -49,7 +51,20 @@ const AdminDashboard = () => {
     };
 
     checkAuth();
+// Fetch signup setting
+const fetchSignupSetting = async () => {
+  const { data } = await supabase
+    .from('app_settings')
+    .select('admin_signup_open')
+    .eq('id', 1)
+    .single();
 
+  if (data) {
+    setSignupOpen(data.admin_signup_open);
+  }
+};
+    fetchSignupSetting();
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event) => {
         if (event === 'SIGNED_OUT') {
@@ -65,6 +80,27 @@ const AdminDashboard = () => {
     await supabase.auth.signOut();
     navigate('/admin');
   };
+
+  const toggleSignup = async () => {
+  if (signupOpen === null) return;
+
+  const { error } = await supabase
+    .from('app_settings')
+    .update({ admin_signup_open: !signupOpen })
+    .eq('id', 1);
+
+  if (!error) {
+    setSignupOpen(!signupOpen);
+    toast.success(
+      !signupOpen
+        ? 'Admin signup opened'
+        : 'Admin signup closed'
+    );
+  } else {
+    toast.error('Failed to update setting');
+  }
+};
+
 
   const navItems = [
     { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
@@ -131,6 +167,16 @@ const AdminDashboard = () => {
                 </Link>
               ))}
             </nav>
+            
+  {userRole === 'admin' && signupOpen !== null && (
+  <Button
+    onClick={toggleSignup}
+    variant="ghost"
+    className="w-full justify-start text-cream/70 hover:text-cream hover:bg-cream/10 mb-2"
+  >
+    {signupOpen ? 'Close Admin Signup' : 'Open Admin Signup'}
+  </Button>
+)}
 
             {/* Logout */}
             <div className="p-4 border-t border-cream/10">
