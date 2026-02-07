@@ -1,3 +1,5 @@
+import ForgotPassword from "./pages/admin/ForgotPassword";
+import ResetPassword from "./pages/admin/ResetPassword";
 import { HelmetProvider } from 'react-helmet-async';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/admin" element={<AdminAuth />} />
+            <Route path="/admin/forgot-password" element={<ForgotPassword />} />
+<Route path="/admin/reset-password" element={<ResetPassword />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />}>
               <Route index element={<AdminOverview />} />
               <Route path="dishes" element={<AdminDishes />} />
