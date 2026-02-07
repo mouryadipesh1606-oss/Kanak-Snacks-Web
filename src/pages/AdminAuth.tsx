@@ -110,17 +110,26 @@ const AdminAuth = () => {
   };
 
   const handleSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  setIsLoading(true);
 
-    try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/admin`,
-        },
-      });
+  try {
+    // Check if admin signup is open
+    const { data: signupOpen } = await supabase.rpc('is_admin_signup_open');
+
+    if (!signupOpen) {
+      toast.error('Admin signup is currently closed.');
+      setIsLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/admin`,
+      },
+    });
 
       if (error) throw error;
 
