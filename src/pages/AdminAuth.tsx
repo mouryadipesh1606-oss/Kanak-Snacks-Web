@@ -273,11 +273,24 @@ const AdminAuth = () => {
               </Button>
             </form>
 
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              {isLogin
-                ? 'First time? Switch to Sign Up to create your admin account.'
-                : 'Already have an account? Switch to Login.'}
-            </p>
+           <p className="mt-4 text-center text-sm text-muted-foreground">
+  {isLogin ? (
+    <>
+      First time? Switch to Sign Up to create your admin account.
+      <br />
+      <button
+        onClick={() => navigate('/admin/forgot-password')}
+        className="text-primary hover:underline mt-2"
+        type="button"
+      >
+        Forgot password?
+      </button>
+    </>
+  ) : (
+    'Already have an account? Switch to Login.'
+  )}
+</p>
+
           </div>
 
           <p className="text-center text-cream/50 text-sm mt-6">
