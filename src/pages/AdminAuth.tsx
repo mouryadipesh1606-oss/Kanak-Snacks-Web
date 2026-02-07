@@ -86,7 +86,7 @@ const AdminAuth = () => {
       });
 
       if (error) throw error;
-
+      await supabase.rpc('handle_signup_role_assignment');
       const { data: roleData } = await supabase
         .from('user_roles')
         .select('role')
@@ -109,7 +109,7 @@ const AdminAuth = () => {
     }
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
+ const handleSignup = async (e: React.FormEvent) => {
   e.preventDefault();
   setIsLoading(true);
 
@@ -123,7 +123,7 @@ const AdminAuth = () => {
       return;
     }
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -131,43 +131,23 @@ const AdminAuth = () => {
       },
     });
 
-      if (error) throw error;
+    if (error) throw error;
 
-      if (!data.user) {
-        toast.error('Signup failed. Please try again.');
-        return;
-      }
+    toast.success(
+      'Verification link sent. Please confirm your email, then log in.'
+    );
 
-      // Assign role based on invitation or first-admin logic
-      const { data: roleResult, error: roleError } = await supabase.rpc(
-        'handle_signup_role_assignment'
-      );
+    // switch to login tab
+    setIsLogin(true);
+  } catch (error: unknown) {
+    const message =
+      error instanceof Error ? error.message : 'Signup failed';
+    toast.error(message);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-      if (roleError) {
-        toast.error('Failed to assign role. Please contact administrator.');
-        await supabase.auth.signOut();
-        return;
-      }
-
-      if (roleResult === 'none') {
-        toast.error('No invitation found for this email. Please contact the admin.');
-        await supabase.auth.signOut();
-        return;
-      }
-
-      toast.success(
-        roleResult === 'admin'
-          ? 'Welcome! You are the main admin.'
-          : 'Welcome! You have been added as a sub-admin.'
-      );
-      navigate('/admin/dashboard');
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : 'Signup failed';
-      toast.error(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (checkingInvite) {
     return (
