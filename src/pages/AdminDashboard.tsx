@@ -107,6 +107,8 @@ const fetchSignupSetting = async () => {
     { name: 'Dishes', path: '/admin/dashboard/dishes', icon: UtensilsCrossed },
     { name: 'Gallery', path: '/admin/dashboard/gallery', icon: Image },
     { name: 'Messages', path: '/admin/dashboard/messages', icon: MessageSquare },
+     { name: 'Tables', path: '/admin/dashboard/tables', icon: LayoutDashboard },
+  { name: 'Orders', path: '/admin/dashboard/orders', icon: UtensilsCrossed },
     // Sub-admin management only visible to main admin
     ...(userRole === 'admin'
       ? [{ name: 'Sub-Admins', path: '/admin/dashboard/sub-admins', icon: Users }]
