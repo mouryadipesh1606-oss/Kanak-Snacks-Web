@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Search, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowUpDown, ShoppingCart } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -39,8 +39,9 @@ const Menu = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortOption>('default');
-  const [cart, setCart] = useState<Record<string, { dish: Dish; quantity: number }>>({});
 
+  const [cart, setCart] = useState<Record<string, { dish: Dish; quantity: number }>>({});
+  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -60,7 +61,6 @@ const Menu = () => {
   const filteredAndSortedDishes = useMemo(() => {
     let result = [...dishes];
 
-    // Filter by search
     if (searchQuery) {
       result = result.filter(
         (dish) =>
@@ -69,12 +69,10 @@ const Menu = () => {
       );
     }
 
-    // Filter by category
     if (selectedCategory !== 'all') {
       result = result.filter((dish) => dish.category_id === selectedCategory);
     }
 
-    // Sort
     switch (sortBy) {
       case 'price-low':
         result.sort((a, b) => a.price - b.price);
@@ -98,38 +96,34 @@ const Menu = () => {
     return category?.name || 'Uncategorized';
   };
 
-  // Add to cart function
-const handleAddToCart = (dish: Dish) => {
-  setCart((prev) => {
-    const updated = { ...prev };
+  // Add to cart
+  const handleAddToCart = (dish: Dish) => {
+    setCart((prev) => {
+      const updated = { ...prev };
 
-    if (updated[dish.id]) {
-      updated[dish.id].quantity += 1;
-    } else {
-      updated[dish.id] = { dish, quantity: 1 };
-    }
+      if (updated[dish.id]) {
+        updated[dish.id].quantity += 1;
+      } else {
+        updated[dish.id] = { dish, quantity: 1 };
+      }
 
-    return updated;
-  });
-};
-  // Cart items
-const cartItems = Object.values(cart);
+      return updated;
+    });
 
-// Total price
-const cartTotal = cartItems.reduce(
-  (sum, item) => sum + item.dish.price * item.quantity,
-  0
-);
+    setIsCartOpen(true);
+  };
 
+  const cartItems = Object.values(cart);
 
+  const cartTotal = cartItems.reduce(
+    (sum, item) => sum + item.dish.price * item.quantity,
+    0
+  );
 
-  // Group dishes by category for display
   const groupedDishes = useMemo(() => {
     if (selectedCategory !== 'all') {
       return { [selectedCategory]: filteredAndSortedDishes };
     }
-
-   
 
     const groups: Record<string, Dish[]> = {};
     categories.forEach((cat) => {
@@ -139,7 +133,6 @@ const cartTotal = cartItems.reduce(
       }
     });
 
-    // Add uncategorized
     const uncategorized = filteredAndSortedDishes.filter((d) => !d.category_id);
     if (uncategorized.length > 0) {
       groups['uncategorized'] = uncategorized;
@@ -151,114 +144,33 @@ const cartTotal = cartItems.reduce(
   return (
     <>
       <Helmet>
-        <title>Menu - Kanak Snacks | Vegetarian Burgers, Fries, Momos & More</title>
-        <meta
-          name="description"
-          content="Explore our delicious menu of pure vegetarian snacks including burgers, fries, momos, soups, and starters. Fresh and affordable street food in Bhiwandi."
-        />
-        <meta
-          name="keywords"
-          content="Vegetarian Menu Bhiwandi, Veg Burgers, Fries, Momos, Chinese Food, Street Food Menu"
-        />
+        <title>Menu - Kanak Snacks</title>
       </Helmet>
 
       <Navbar />
 
+      {/* Cart button in header */}
+      <div className="fixed top-20 right-4 z-40">
+        <Button
+          className="rounded-full"
+          onClick={() => setIsCartOpen(true)}
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          {cartItems.length}
+        </Button>
+      </div>
+
       <main className="pt-20">
-        {/* Hero */}
-        <section className="bg-charcoal py-16 md:py-24">
-          <div className="container mx-auto px-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-display font-bold text-cream mb-4">
-              Our <span className="text-primary">Menu</span>
-            </h1>
-            <p className="text-cream/70 max-w-2xl mx-auto">
-              Explore our carefully crafted pure vegetarian dishes, made fresh with love
-            </p>
-          </div>
-        </section>
-
-        {/* Filters */}
-        <section className="sticky top-16 md:top-20 z-40 bg-background/95 backdrop-blur-md border-b py-4">
-          <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-center">
-              {/* Search */}
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  placeholder="Search dishes..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 rounded-xl"
-                />
-              </div>
-
-              {/* Category Filter */}
-              <div className="flex gap-3">
-                <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                  <SelectTrigger className="w-[180px] rounded-xl">
-                    <SlidersHorizontal className="w-4 h-4 mr-2" />
-                    <SelectValue placeholder="Category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                {/* Sort */}
-                <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-                  <SelectTrigger className="w-[160px] rounded-xl">
-                    <ArrowUpDown className="w-4 h-4 mr-2" />
-                    <SelectValue placeholder="Sort" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="default">Default</SelectItem>
-                    <SelectItem value="price-low">Price: Low to High</SelectItem>
-                    <SelectItem value="price-high">Price: High to Low</SelectItem>
-                    <SelectItem value="name">Name: A to Z</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Menu Items */}
+        {/* Menu Section */}
         <section className="section-padding bg-secondary">
           <div className="container mx-auto">
             {loading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className="bg-card rounded-2xl h-80 animate-pulse" />
-                ))}
-              </div>
-            ) : Object.keys(groupedDishes).length === 0 ? (
-              <div className="text-center py-16">
-                <p className="text-3xl mb-4">🍽️</p>
-                <h3 className="text-xl font-semibold mb-2">No dishes found</h3>
-                <p className="text-muted-foreground">
-                  Try adjusting your search or filter criteria
-                </p>
-                <Button
-                  variant="outline"
-                  className="mt-4 rounded-xl"
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedCategory('all');
-                  }}
-                >
-                  Clear Filters
-                </Button>
-              </div>
+              <p>Loading...</p>
             ) : (
               <div className="space-y-12">
                 {Object.entries(groupedDishes).map(([categoryId, categoryDishes]) => (
                   <div key={categoryId}>
-                    <h2 className="text-2xl md:text-3xl font-display font-bold text-foreground mb-6 pb-2 border-b-2 border-primary/30">
+                    <h2 className="text-2xl font-bold mb-6">
                       {categoryId === 'uncategorized'
                         ? 'Other Items'
                         : getCategoryName(categoryId)}
@@ -266,11 +178,10 @@ const cartTotal = cartItems.reduce(
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {categoryDishes.map((dish) => (
                         <DishCard
-  key={dish.id}
-  dish={dish}
-  onAddToCart={handleAddToCart}
-/>
-
+                          key={dish.id}
+                          dish={dish}
+                          onAddToCart={handleAddToCart}
+                        />
                       ))}
                     </div>
                   </div>
@@ -279,26 +190,76 @@ const cartTotal = cartItems.reduce(
             )}
           </div>
         </section>
-        {/* Cart Bar */}
-{cartItems.length > 0 && (
-  <div className="fixed bottom-0 left-0 right-0 bg-charcoal text-cream p-4 shadow-lg z-50">
-    <div className="container mx-auto flex items-center justify-between">
-      <div>
-        <p className="text-sm opacity-80">
-          {cartItems.length} items in cart
-        </p>
-        <p className="text-lg font-bold">Total: ₹{cartTotal}</p>
-      </div>
-      <Button
-        className="bg-primary text-primary-foreground rounded-xl px-6"
-        onClick={() => alert('Order placed (next step: save to database)')}
-      >
-        Place Order
-      </Button>
-    </div>
-  </div>
-)}
 
+        {/* Cart Drawer */}
+        {isCartOpen && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex justify-end">
+            <div className="w-full max-w-md bg-white h-full shadow-xl p-6 overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold">Your Cart</h2>
+                <button onClick={() => setIsCartOpen(false)}>✕</button>
+              </div>
+
+              {cartItems.length === 0 ? (
+                <p>Cart is empty</p>
+              ) : (
+                <div className="space-y-4">
+                  {cartItems.map((item) => (
+                    <div
+                      key={item.dish.id}
+                      className="flex justify-between items-center border-b pb-3"
+                    >
+                      <div>
+                        <p className="font-semibold">{item.dish.name}</p>
+                        <p className="text-sm">
+                          ₹{item.dish.price} × {item.quantity}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="icon"
+                          variant="outline"
+                          onClick={() =>
+                            setCart((prev) => {
+                              const updated = { ...prev };
+                              updated[item.dish.id].quantity -= 1;
+                              if (updated[item.dish.id].quantity <= 0) {
+                                delete updated[item.dish.id];
+                              }
+                              return updated;
+                            })
+                          }
+                        >
+                          -
+                        </Button>
+                        <span>{item.quantity}</span>
+                        <Button
+                          size="icon"
+                          onClick={() =>
+                            setCart((prev) => {
+                              const updated = { ...prev };
+                              updated[item.dish.id].quantity += 1;
+                              return updated;
+                            })
+                          }
+                        >
+                          +
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+
+                  <div className="pt-4 border-t">
+                    <p className="text-lg font-bold">Total: ₹{cartTotal}</p>
+                    <Button className="w-full mt-3">
+                      Place Order
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />
