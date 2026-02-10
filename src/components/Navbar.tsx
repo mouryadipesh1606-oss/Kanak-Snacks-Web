@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Phone, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const location = useLocation();
 
   const navLinks = [
@@ -16,6 +17,23 @@ const Navbar = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Load cart count
+  useEffect(() => {
+    const updateCart = () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '{}');
+      const count = Object.values(cart).reduce(
+        (sum: number, item: any) => sum + item.quantity,
+        0
+      );
+      setCartCount(count);
+    };
+
+    updateCart();
+
+    window.addEventListener('storage', updateCart);
+    return () => window.removeEventListener('storage', updateCart);
+  }, []);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-charcoal/95 backdrop-blur-md border-b border-primary/20">
@@ -48,9 +66,11 @@ const Navbar = () => {
             {/* Cart Icon */}
             <button className="relative text-cream hover:text-primary transition">
               <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1">
+                  {cartCount}
+                </span>
+              )}
             </button>
 
             {/* Call Button */}
@@ -67,15 +87,15 @@ const Navbar = () => {
 
           {/* Mobile Right Icons */}
           <div className="md:hidden flex items-center gap-3">
-            {/* Cart Icon */}
             <button className="relative text-cream">
               <ShoppingCart className="w-6 h-6" />
-              <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1">
+                  {cartCount}
+                </span>
+              )}
             </button>
 
-            {/* Menu Toggle */}
             <button
               className="text-cream p-2"
               onClick={() => setIsOpen(!isOpen)}
