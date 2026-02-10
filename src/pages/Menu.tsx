@@ -98,13 +98,8 @@ const Menu = () => {
     return category?.name || 'Uncategorized';
   };
 
-  // Group dishes by category for display
-  const groupedDishes = useMemo(() => {
-    if (selectedCategory !== 'all') {
-      return { [selectedCategory]: filteredAndSortedDishes };
-    }
-
-    const handleAddToCart = (dish: Dish, quantity: number) => {
+  // Add to cart function
+const handleAddToCart = (dish: Dish, quantity: number) => {
   setCart((prev) => {
     const updated = { ...prev };
 
@@ -118,13 +113,23 @@ const Menu = () => {
   });
 };
 
+// Cart items
 const cartItems = Object.values(cart);
 
+// Total price
 const cartTotal = cartItems.reduce(
   (sum, item) => sum + item.dish.price * item.quantity,
   0
 );
 
+
+  // Group dishes by category for display
+  const groupedDishes = useMemo(() => {
+    if (selectedCategory !== 'all') {
+      return { [selectedCategory]: filteredAndSortedDishes };
+    }
+
+   
 
     const groups: Record<string, Dish[]> = {};
     categories.forEach((cat) => {
