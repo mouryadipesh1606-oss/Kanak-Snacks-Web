@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Search, SlidersHorizontal, ArrowUpDown, ShoppingCart } from 'lucide-react';
+import { Search, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -39,9 +39,7 @@ const Menu = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortOption>('default');
-
   const [cart, setCart] = useState<Record<string, { dish: Dish; quantity: number }>>({});
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,6 +59,7 @@ const Menu = () => {
   const filteredAndSortedDishes = useMemo(() => {
     let result = [...dishes];
 
+    // Search
     if (searchQuery) {
       result = result.filter(
         (dish) =>
@@ -69,10 +68,12 @@ const Menu = () => {
       );
     }
 
+    // Category
     if (selectedCategory !== 'all') {
       result = result.filter((dish) => dish.category_id === selectedCategory);
     }
 
+    // Sort
     switch (sortBy) {
       case 'price-low':
         result.sort((a, b) => a.price - b.price);
@@ -109,17 +110,9 @@ const Menu = () => {
 
       return updated;
     });
-
-    setIsCartOpen(true);
   };
 
-  const cartItems = Object.values(cart);
-
-  const cartTotal = cartItems.reduce(
-    (sum, item) => sum + item.dish.price * item.quantity,
-    0
-  );
-
+  // Group dishes
   const groupedDishes = useMemo(() => {
     if (selectedCategory !== 'all') {
       return { [selectedCategory]: filteredAndSortedDishes };
@@ -149,23 +142,54 @@ const Menu = () => {
 
       <Navbar />
 
-      {/* Cart button in header */}
-      <div className="fixed top-20 right-4 z-40">
-        <Button
-          className="rounded-full"
-          onClick={() => setIsCartOpen(true)}
-        >
-          <ShoppingCart className="w-4 h-4 mr-2" />
-          {cartItems.length}
-        </Button>
-      </div>
-
       <main className="pt-20">
-        {/* Menu Section */}
+        {/* Hero */}
+        <section className="bg-charcoal py-16 md:py-24">
+          <div className="container mx-auto px-4 text-center">
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-cream mb-4">
+              Our <span className="text-primary">Menu</span>
+            </h1>
+            <p className="text-cream/70 max-w-2xl mx-auto">
+              Explore our carefully crafted pure vegetarian dishes
+            </p>
+          </div>
+        </section>
+
+        {/* Filters */}
+        <section className="sticky top-16 md:top-20 z-40 bg-background/95 backdrop-blur-md border-b py-4">
+          <div className="container mx-auto px-4 flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+              <Input
+                placeholder="Search dishes..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 rounded-xl"
+              />
+            </div>
+
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-[180px] rounded-xl">
+                <SlidersHorizontal className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </section>
+
+        {/* Menu Items */}
         <section className="section-padding bg-secondary">
           <div className="container mx-auto">
             {loading ? (
-              <p>Loading...</p>
+              <div>Loading...</div>
             ) : (
               <div className="space-y-12">
                 {Object.entries(groupedDishes).map(([categoryId, categoryDishes]) => (
@@ -190,76 +214,6 @@ const Menu = () => {
             )}
           </div>
         </section>
-
-        {/* Cart Drawer */}
-        {isCartOpen && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex justify-end">
-            <div className="w-full max-w-md bg-white h-full shadow-xl p-6 overflow-y-auto">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold">Your Cart</h2>
-                <button onClick={() => setIsCartOpen(false)}>✕</button>
-              </div>
-
-              {cartItems.length === 0 ? (
-                <p>Cart is empty</p>
-              ) : (
-                <div className="space-y-4">
-                  {cartItems.map((item) => (
-                    <div
-                      key={item.dish.id}
-                      className="flex justify-between items-center border-b pb-3"
-                    >
-                      <div>
-                        <p className="font-semibold">{item.dish.name}</p>
-                        <p className="text-sm">
-                          ₹{item.dish.price} × {item.quantity}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          onClick={() =>
-                            setCart((prev) => {
-                              const updated = { ...prev };
-                              updated[item.dish.id].quantity -= 1;
-                              if (updated[item.dish.id].quantity <= 0) {
-                                delete updated[item.dish.id];
-                              }
-                              return updated;
-                            })
-                          }
-                        >
-                          -
-                        </Button>
-                        <span>{item.quantity}</span>
-                        <Button
-                          size="icon"
-                          onClick={() =>
-                            setCart((prev) => {
-                              const updated = { ...prev };
-                              updated[item.dish.id].quantity += 1;
-                              return updated;
-                            })
-                          }
-                        >
-                          +
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-
-                  <div className="pt-4 border-t">
-                    <p className="text-lg font-bold">Total: ₹{cartTotal}</p>
-                    <Button className="w-full mt-3">
-                      Place Order
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
       </main>
 
       <Footer />
