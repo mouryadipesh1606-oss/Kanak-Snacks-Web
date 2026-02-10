@@ -98,19 +98,23 @@ const Menu = () => {
   };
 
   // Add to cart
-  const handleAddToCart = (dish: Dish) => {
-    setCart((prev) => {
-      const updated = { ...prev };
+ const handleAddToCart = (dish: Dish) => {
+  setCart((prev) => {
+    const updated = { ...prev };
 
-      if (updated[dish.id]) {
-        updated[dish.id].quantity += 1;
-      } else {
-        updated[dish.id] = { dish, quantity: 1 };
-      }
+    if (updated[dish.id]) {
+      updated[dish.id].quantity += 1;
+    } else {
+      updated[dish.id] = { dish, quantity: 1 };
+    }
 
-      return updated;
-    });
-  };
+    // save to localStorage
+    localStorage.setItem('cart', JSON.stringify(updated));
+
+    return updated;
+  });
+};
+
 
   // Group dishes
   const groupedDishes = useMemo(() => {
