@@ -10,9 +10,10 @@ interface DishCardProps {
     is_available: boolean;
   };
   onAddToCart: (dish: DishCardProps['dish']) => void;
+  isTableMode: boolean;
 }
 
-const DishCard = ({ dish, onAddToCart }: DishCardProps) => {
+const DishCard = ({ dish, onAddToCart, isTableMode }: DishCardProps) => {
   return (
     <div className="card-food group">
       {/* Image */}
@@ -55,9 +56,28 @@ const DishCard = ({ dish, onAddToCart }: DishCardProps) => {
           </p>
         )}
 
-        <Button onClick={() => onAddToCart(dish)}>
-  Add to Cart
-</Button>
+        {/* Table mode */}
+        {isTableMode ? (
+          <Button
+            className="w-full"
+            onClick={() => onAddToCart(dish)}
+          >
+            Add to Cart
+          </Button>
+        ) : (
+          <div className="flex gap-2">
+            <a href="https://www.zomato.com/" target="_blank" className="w-full">
+              <Button variant="outline" className="w-full">
+                Zomato
+              </Button>
+            </a>
+            <a href="https://www.swiggy.com/" target="_blank" className="w-full">
+              <Button className="w-full">
+                Swiggy
+              </Button>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   );
