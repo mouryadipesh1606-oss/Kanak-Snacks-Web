@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone } from 'lucide-react';
+import { Menu, X, Phone, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart } from 'lucide-react';
-
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,14 +44,21 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+
+            {/* Cart Icon */}
             <button className="relative text-cream hover:text-primary transition">
-    <ShoppingCart className="w-6 h-6" />
-    <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1">
-      0
-    </span>
-  </button>
+              <ShoppingCart className="w-6 h-6" />
+              <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1">
+                0
+              </span>
+            </button>
+
+            {/* Call Button */}
             <a href="tel:09226760904">
-              <Button size="sm" className="bg-primary text-charcoal hover:bg-accent rounded-full px-6">
+              <Button
+                size="sm"
+                className="bg-primary text-charcoal hover:bg-accent rounded-full px-6"
+              >
                 <Phone className="w-4 h-4 mr-2" />
                 Call Now
               </Button>
@@ -61,26 +66,25 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Right Icons */}
-<div className="md:hidden flex items-center gap-3">
-  {/* Cart Icon */}
-  <button className="relative text-cream">
-    <ShoppingCart className="w-6 h-6" />
-    <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1">
-      0
-    </span>
-  </button>
+          <div className="md:hidden flex items-center gap-3">
+            {/* Cart Icon */}
+            <button className="relative text-cream">
+              <ShoppingCart className="w-6 h-6" />
+              <span className="absolute -top-2 -right-2 bg-primary text-white text-xs rounded-full px-1">
+                0
+              </span>
+            </button>
 
-  {/* Menu Toggle */}
-  <button
-    className="text-cream p-2"
-    onClick={() => setIsOpen(!isOpen)}
-    aria-label="Toggle menu"
-  >
-    {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-  </button>
-</div>
-
-      
+            {/* Menu Toggle */}
+            <button
+              className="text-cream p-2"
+              onClick={() => setIsOpen(!isOpen)}
+              aria-label="Toggle menu"
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
+        </div>
 
         {/* Mobile Nav */}
         {isOpen && (
