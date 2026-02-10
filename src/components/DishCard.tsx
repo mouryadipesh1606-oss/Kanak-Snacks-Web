@@ -11,23 +11,23 @@ interface DishCardProps {
     image_url: string | null;
     is_available: boolean;
   };
-  onAddToCart: (dish: DishCardProps['dish'], quantity: number) => void;
+  addToCart: (dish: DishCardProps['dish'], quantity: number) => void;
 }
 
-const DishCard = ({ dish, onAddToCart }: DishCardProps) => {
+const DishCard = ({ dish, addToCart }: DishCardProps) => {
   const [quantity, setQuantity] = useState(0);
 
   const increase = () => {
     const newQty = quantity + 1;
     setQuantity(newQty);
-    onAddToCart(dish, newQty);
+    addToCart(dish, newQty);
   };
 
   const decrease = () => {
     if (quantity === 0) return;
     const newQty = quantity - 1;
     setQuantity(newQty);
-    onAddToCart(dish, newQty);
+    addToCart(dish, newQty);
   };
 
   return (
