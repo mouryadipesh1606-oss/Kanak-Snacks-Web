@@ -10,7 +10,9 @@ import {
   LogOut,
   Menu,
   X,
-  Users
+  Users,
+  Table2,
+ClipboardList
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
@@ -107,8 +109,8 @@ const fetchSignupSetting = async () => {
     { name: 'Dishes', path: '/admin/dashboard/dishes', icon: UtensilsCrossed },
     { name: 'Gallery', path: '/admin/dashboard/gallery', icon: Image },
     { name: 'Messages', path: '/admin/dashboard/messages', icon: MessageSquare },
-     { name: 'Tables', path: '/admin/dashboard/tables', icon: LayoutDashboard },
-  { name: 'Orders', path: '/admin/dashboard/orders', icon: UtensilsCrossed },
+     { name: 'Tables', path: '/admin/dashboard/tables', icon: Table2 },
+  { name: 'Orders', path: '/admin/dashboard/orders', icon: ClipboardList },
     // Sub-admin management only visible to main admin
     ...(userRole === 'admin'
       ? [{ name: 'Sub-Admins', path: '/admin/dashboard/sub-admins', icon: Users }]
