@@ -1,6 +1,4 @@
-import { Plus, Minus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
 
 interface DishCardProps {
   dish: {
@@ -11,25 +9,10 @@ interface DishCardProps {
     image_url: string | null;
     is_available: boolean;
   };
-  onAddToCart: (dish: DishCardProps['dish'], quantity: number) => void;
+  onAddToCart: (dish: DishCardProps['dish']) => void;
 }
 
 const DishCard = ({ dish, onAddToCart }: DishCardProps) => {
-  const [quantity, setQuantity] = useState(0);
-
-  const increase = () => {
-    const newQty = quantity + 1;
-    setQuantity(newQty);
-    onAddToCart(dish, newQty);
-  };
-
-  const decrease = () => {
-    if (quantity === 0) return;
-    const newQty = quantity - 1;
-    setQuantity(newQty);
-    onAddToCart(dish, newQty);
-  };
-
   return (
     <div className="card-food group">
       {/* Image */}
@@ -62,42 +45,23 @@ const DishCard = ({ dish, onAddToCart }: DishCardProps) => {
 
       {/* Content */}
       <div className="p-5">
-        <h3 className="font-display text-xl font-semibold text-card-foreground mb-2 line-clamp-1">
+        <h3 className="font-display text-xl font-semibold text-card-foreground mb-2">
           {dish.name}
         </h3>
 
         {dish.description && (
-          <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
+          <p className="text-muted-foreground text-sm mb-4">
             {dish.description}
           </p>
         )}
 
-        {/* Quantity Controls */}
-        {dish.is_available && (
-          <div className="flex items-center justify-center gap-3">
-            <Button
-              size="icon"
-              variant="outline"
-              className="rounded-full"
-              onClick={decrease}
-              disabled={quantity === 0}
-            >
-              <Minus className="w-4 h-4" />
-            </Button>
-
-            <span className="text-lg font-semibold w-6 text-center">
-              {quantity}
-            </span>
-
-            <Button
-              size="icon"
-              className="rounded-full bg-primary text-primary-foreground"
-              onClick={increase}
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-          </div>
-        )}
+        <Button
+          className="w-full bg-primary text-primary-foreground rounded-xl"
+          disabled={!dish.is_available}
+          onClick={() => onAddToCart(dish)}
+        >
+          Add to Cart
+        </Button>
       </div>
     </div>
   );
