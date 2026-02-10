@@ -55,13 +55,9 @@ const DishCard = ({ dish, onAddToCart }: DishCardProps) => {
           </p>
         )}
 
-        <Button
-          className="w-full bg-primary text-primary-foreground rounded-xl"
-          disabled={!dish.is_available}
-          onClick={() => onAddToCart(dish)}
-        >
-          Add to Cart
-        </Button>
+        <Button onClick={() => onAddToCart(dish)}>
+  Add to Cart
+</Button>
       </div>
     </div>
   );
