@@ -14,7 +14,11 @@ const AdminTables = () => {
   const [newTable, setNewTable] = useState('');
 
   const fetchTables = async () => {
-    const { data } = await supabase.from('tables').select('*').order('created_at');
+    const { data } = await supabase
+      .from('tables')
+      .select('*')
+      .order('created_at');
+
     if (data) setTables(data);
   };
 
@@ -39,7 +43,11 @@ const AdminTables = () => {
   };
 
   const deleteTable = async (id: string) => {
-    const { error } = await supabase.from('tables').delete().eq('id', id);
+    const { error } = await supabase
+      .from('tables')
+      .delete()
+      .eq('id', id);
+
     if (!error) {
       toast.success('Table deleted');
       fetchTables();
@@ -50,6 +58,7 @@ const AdminTables = () => {
     <div className="space-y-6">
       <h1 className="text-2xl font-bold">Manage Tables</h1>
 
+      {/* Add Table */}
       <div className="flex gap-2">
         <Input
           placeholder="Table name (e.g. Table 1)"
@@ -59,13 +68,22 @@ const AdminTables = () => {
         <Button onClick={addTable}>Add</Button>
       </div>
 
-      <div className="space-y-2">
+      {/* Table List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {tables.map((table) => (
           <div
             key={table.id}
-            className="flex justify-between items-center bg-card p-4 rounded-xl"
+            className="bg-card p-4 rounded-xl shadow flex flex-col items-center gap-3"
           >
-            <span>{table.name}</span>
+            <span className="font-semibold text-lg">{table.name}</span>
+
+            {/* QR Code */}
+            <img
+              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${window.location.origin}/menu?table=${table.id}`}
+              alt="QR Code"
+              className="rounded-lg border"
+            />
+
             <Button
               variant="destructive"
               size="sm"
