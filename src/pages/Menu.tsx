@@ -99,21 +99,20 @@ const Menu = () => {
   };
 
   // Add to cart function
-const handleAddToCart = (dish: Dish, quantity: number) => {
+const handleAddToCart = (dish: Dish) => {
   setCart((prev) => {
     const updated = { ...prev };
 
-    if (quantity <= 0) {
-      delete updated[dish.id];
+    if (updated[dish.id]) {
+      updated[dish.id].quantity += 1;
     } else {
-      updated[dish.id] = { dish, quantity };
+      updated[dish.id] = { dish, quantity: 1 };
     }
 
     return updated;
   });
 };
-
-// Cart items
+  // Cart items
 const cartItems = Object.values(cart);
 
 // Total price
@@ -121,6 +120,7 @@ const cartTotal = cartItems.reduce(
   (sum, item) => sum + item.dish.price * item.quantity,
   0
 );
+
 
 
   // Group dishes by category for display
