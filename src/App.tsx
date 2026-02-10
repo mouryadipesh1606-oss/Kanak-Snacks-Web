@@ -17,6 +17,9 @@ import AdminDishes from "./pages/admin/AdminDishes";
 import AdminGallery from "./pages/admin/AdminGallery";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminSubAdmins from "./pages/admin/AdminSubAdmins";
+import AdminTables from './pages/admin/AdminTables';
+import AdminOrders from './pages/admin/AdminOrders';
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -42,6 +45,10 @@ const App = () => (
               <Route path="gallery" element={<AdminGallery />} />
               <Route path="messages" element={<AdminMessages />} />
               <Route path="sub-admins" element={<AdminSubAdmins />} />
+              <Route path="tables" element={<AdminTables />} />
+              <Route path="orders" element={<AdminOrders />} />
+
+
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
