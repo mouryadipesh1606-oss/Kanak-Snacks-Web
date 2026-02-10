@@ -39,6 +39,8 @@ const Menu = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<SortOption>('default');
+  const [cart, setCart] = useState<Record<string, { dish: Dish; quantity: number }>>({});
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,6 +103,28 @@ const Menu = () => {
     if (selectedCategory !== 'all') {
       return { [selectedCategory]: filteredAndSortedDishes };
     }
+
+    const handleAddToCart = (dish: Dish, quantity: number) => {
+  setCart((prev) => {
+    const updated = { ...prev };
+
+    if (quantity <= 0) {
+      delete updated[dish.id];
+    } else {
+      updated[dish.id] = { dish, quantity };
+    }
+
+    return updated;
+  });
+};
+
+const cartItems = Object.values(cart);
+
+const cartTotal = cartItems.reduce(
+  (sum, item) => sum + item.dish.price * item.quantity,
+  0
+);
+
 
     const groups: Record<string, Dish[]> = {};
     categories.forEach((cat) => {
@@ -236,7 +260,12 @@ const Menu = () => {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       {categoryDishes.map((dish) => (
-                        <DishCard key={dish.id} dish={dish} />
+                        <DishCard
+  key={dish.id}
+  dish={dish}
+  onAddToCart={handleAddToCart}
+/>
+
                       ))}
                     </div>
                   </div>
@@ -245,6 +274,26 @@ const Menu = () => {
             )}
           </div>
         </section>
+        {/* Cart Bar */}
+{cartItems.length > 0 && (
+  <div className="fixed bottom-0 left-0 right-0 bg-charcoal text-cream p-4 shadow-lg z-50">
+    <div className="container mx-auto flex items-center justify-between">
+      <div>
+        <p className="text-sm opacity-80">
+          {cartItems.length} items in cart
+        </p>
+        <p className="text-lg font-bold">Total: ₹{cartTotal}</p>
+      </div>
+      <Button
+        className="bg-primary text-primary-foreground rounded-xl px-6"
+        onClick={() => alert('Order placed (next step: save to database)')}
+      >
+        Place Order
+      </Button>
+    </div>
+  </div>
+)}
+
       </main>
 
       <Footer />
