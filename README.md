@@ -1,46 +1,63 @@
-# Kanak Snacks 🍽️ | Full-Stack Restaurant System
+# 🍽️ Kanak Snacks | Full-Stack Restaurant System
 
-A full-stack restaurant management and billing system developed for Kanak Snacks. This project includes a customer-facing website and a powerful admin dashboard.
+A full-stack restaurant management and billing system developed for Kanak Snacks.  
+This project includes a customer-facing website and a powerful admin dashboard.
 
 ---
 
-## 🌐 Live Website
+## 🌐 Live Demo
 
 👉 https://kanak-snacks-site.netlify.app/
+
+---
+
+## 📸 Screenshots
+
+### 🏠 Homepage
+![Homepage](assets/home.png)
+
+### 🍽️ Menu Page
+![Menu](assets/menu.png)
+
+### 🔐 Admin Dashboard
+![Admin](assets/admin-dashboard.png)
+
+### 🔑 Login Page
+![Login](assets/login.png)
 
 ---
 
 ## 🚀 Features
 
 ### 🧾 Customer Website
-- View menu and dishes
-- Contact form & WhatsApp integration
-- Location & restaurant details
-- Fully responsive design
+- View menu and dishes  
+- Contact form & WhatsApp integration  
+- Restaurant location & details  
+- Fully responsive UI  
 
 ### 🔐 Admin Panel
-- Admin & Sub-admin authentication
-- Dashboard with analytics (messages, dishes, etc.)
-- Manage dishes and menu
-- Handle customer messages
-- Manage tables with QR codes
-- Order tracking system
+- Admin & Sub-admin authentication  
+- Dashboard with analytics  
+- Menu & dish management  
+- Customer message handling  
+- Table management with QR codes  
+- Order tracking system  
 
 ---
 
 ## 🛠️ Tech Stack
 
-- Frontend: React (TypeScript), Tailwind CSS  
-- Backend: Supabase (Auth + Database)  
-- Deployment: Netlify  
+- **Frontend:** React (TypeScript), Tailwind CSS  
+- **Backend:** Supabase (Authentication + Database)  
+- **Deployment:** Netlify  
 
 ---
 
-## 📁 Project Modules
+## 📁 Project Structure
+src/ → Frontend logic
+supabase/ → Backend & database
+public/ → Static assets
 
-- `src/` → Frontend logic  
-- `supabase/` → Database & backend  
-- Admin Panel → Authentication + management system  
 
 ---
 
@@ -52,8 +69,8 @@ Designed for real restaurant usage to manage menu, orders, and customer interact
 
 ## 🔐 Admin Access
 
-Only authorized users can access the admin panel.  
-First registered user becomes the main admin.
+- Only authorized users can access the admin panel  
+- First registered user becomes the main admin  
 
 ---
 
@@ -62,3 +79,16 @@ First registered user becomes the main admin.
 ```bash
 npm install
 npm run dev
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
+⚠️ Please give proper credit if you use this project.
+
+---
+
+## 👨‍💻 Author
+
+Developed by Dipesh Mourya 🚀
