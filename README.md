@@ -20,7 +20,7 @@ This project includes a customer-facing website and a powerful admin dashboard.
 ![Menu](assets/menu.png)
 
 ### 🔐 Admin Dashboard
-![Admin]([assets/admin-dashboard.png](https://github.com/mouryadipesh1606-oss/Kanak-Snacks-Web/blob/main/assets/dashboard_admin.jpeg))
+![Admin](https://github.com/mouryadipesh1606-oss/Kanak-Snacks-Web/blob/main/assets/dashboard_admin.jpeg)
 
 ### 🔑 Login Page
 ![Login](assets/login.png)
