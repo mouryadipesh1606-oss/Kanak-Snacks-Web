@@ -1,4 +1,4 @@
-# 🍽️ Kanak-Snacks-web | Full-Stack Restaurant System
+# 🍽️ Kanak-Snacks-Web | Full-Stack Restaurant System
 
 A full-stack restaurant management and billing system developed for Kanak Snacks.  
 This project includes a customer-facing website and a powerful admin dashboard.
